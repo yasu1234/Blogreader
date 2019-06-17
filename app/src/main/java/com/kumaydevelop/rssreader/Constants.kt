@@ -9,6 +9,16 @@ class Constants {
         FIFTY("4",50),
     }
 
+    enum class UpdateTime(val code: String, val time: Int) {
+        FIFTEENMINUTES("0",15),
+        THIRTYMINUTES("1",30),
+        HOUR("2",1),
+        THREEHOURS("3",3),
+        SIXHOURS("4",6),
+        TWENTYHOUES("5",12),
+        DAY("6",24),
+    }
+
     companion object {
         const val NOT_USE_GET_ARTICLES = 0
     }

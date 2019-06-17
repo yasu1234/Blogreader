@@ -8,7 +8,6 @@ import android.widget.TextView
 import com.kumaydevelop.rssreader.Model.BlogModel
 import io.realm.OrderedRealmCollection
 import io.realm.RealmBaseAdapter
-import java.text.SimpleDateFormat
 
 class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<BlogModel>(data) {
 
@@ -36,9 +35,8 @@ class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<B
 
         adapterData?.run {
             val blog = get(position)
-            val df = SimpleDateFormat("yyyy/MM/dd")
             // 年月日と時間を表示する
-            viewHolder.date.setText(DateFormat.format("yyyy/MM/dd", blog.lastUpdate).toString())
+            viewHolder.date.setText(DateFormat.format("yyyy/MM/dd HH:mm", blog.lastUpdate).toString())
             viewHolder.title.setText(blog.title)
 
         }

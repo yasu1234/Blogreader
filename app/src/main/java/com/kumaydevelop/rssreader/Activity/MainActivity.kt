@@ -36,15 +36,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (setting.size == 0) {
             realm.executeTransaction {
-                // データがない場合は50件でデフォルト登録する
+                // データがない場合は表示件数を50件、更新確認タイミングを1時間でデフォルト登録する
                 val maxId = realm.where<SettingModel>().max("id")
                 val nextId = (maxId?.toLong() ?: 0L) + 1
                 val settingData = realm.createObject<SettingModel>(nextId)
                 settingData.displayCountCode = "4"
+                settingData.updateTimeCode = "2"
                 settingData.updateDate = Date()
             }
 
             count = 50
+
         } else {
             val setting = realm.where<SettingModel>().findAll()
             count = Constants.DisplayCount.values().filter { it.code == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
@@ -97,7 +99,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.nav_slideshow -> {
-
+                val intent = Intent(this, UpdateSettingActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_manage -> {
 

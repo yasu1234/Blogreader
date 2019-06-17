@@ -31,7 +31,6 @@ class ArticlesAdapter(private val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         val rowView = LayoutInflater.from(context).inflate(R.layout.article_content, parent, false)
 
-        // set the view's size, margins, paddings and layout parameters
         return ArticleViewHolder(rowView, articleClicked)
     }
 
@@ -44,5 +43,4 @@ class ArticlesAdapter(private val context: Context,
 
         holder.setUp(articles[position])
     }
-
 }
