@@ -35,6 +35,13 @@
             android:name=".Activity.CountSettingActivity"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".Activity.UpdateSettingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <service
+            android:name=".PollingJob"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

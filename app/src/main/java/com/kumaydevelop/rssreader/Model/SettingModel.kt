@@ -8,6 +8,7 @@ open class SettingModel: RealmObject() {
     @PrimaryKey
     var id : Long = 1
     var displayCountCode: String = ""
+    var updateTimeCode: String = ""
     var updateDate : Date = Date()
 }
 

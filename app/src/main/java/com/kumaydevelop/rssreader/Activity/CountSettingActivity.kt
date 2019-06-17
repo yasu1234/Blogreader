@@ -1,5 +1,6 @@
 package com.kumaydevelop.rssreader.Activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -11,8 +12,6 @@ import com.kumaydevelop.rssreader.R
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_setting_count.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.yesButton
 import java.util.*
 
 
@@ -45,9 +44,12 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
                 }
             }
 
-            alert("更新しました") {
-                yesButton { finish() }
-            }.show()
+            var dialog = com.kumaydevelop.rssreader.AlertDialog()
+            dialog.title = "更新しました"
+            dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                finish()
+            }
+            dialog.show(supportFragmentManager, null)
         }
 
         cancelButton.setOnClickListener {

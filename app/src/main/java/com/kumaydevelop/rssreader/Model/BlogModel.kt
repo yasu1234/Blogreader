@@ -9,6 +9,5 @@ open class BlogModel: RealmObject() {
     var id : Long = 0
     var title: String = ""
     var url: String = ""
-    var displayCount: Int = 50
     var lastUpdate : Date = Date()
 }

@@ -1,5 +1,9 @@
 package com.kumaydevelop.rssreader.Activity
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
@@ -13,6 +17,7 @@ import kotlinx.android.synthetic.main.add_site.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.yesButton
+import java.util.concurrent.TimeUnit
 
 class SiteAddActivity: AppCompatActivity() {
 
@@ -25,9 +30,11 @@ class SiteAddActivity: AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             if (urlText.text.toString().isNullOrBlank()) {
-                alert("URLを入力してください") {
-                    yesButton {}
-                }.show()
+                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                dialog.title = "URLを入力してください"
+                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                }
+                dialog.show(supportFragmentManager, null)
             } else {
                 val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
                 supportLoaderManager.initLoader(0, args, getRssUrlCallback)
@@ -48,9 +55,11 @@ class SiteAddActivity: AppCompatActivity() {
 
         override fun onLoadFinished(loader: Loader<Feed>?, data: Feed?) {
             if (data?.feedUrl.isNullOrBlank()) {
-                alert("Rss2.0形式に対応していません") {
-                    yesButton {}
-                }.show()
+                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                dialog.title = "Rss2.0形式に対応していません"
+                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                }
+                dialog.show(supportFragmentManager, null)
             } else {
                 val args: Bundle = Bundle().also { it.putString("rssUrl",  data?.feedUrl)}
                 supportLoaderManager.initLoader(1, args, getArticleCallbacks)
@@ -68,13 +77,17 @@ class SiteAddActivity: AppCompatActivity() {
 
         override fun onLoadFinished(loader: Loader<Rss>?, data: Rss?) {
             if (data!!.title.isNullOrBlank()) {
-                alert("Rss2.0形式に対応していません") {
-                    yesButton {}
-                }.show()
+
+                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                dialog.title = "Rss2.0形式に対応していません"
+                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                }
+                dialog.show(supportFragmentManager, null)
             } else {
                 alert(data.title + "を登録しますか?") {
                     yesButton {
                         register(data)
+                        createJob()
                         finish()
                     }
                     noButton { }
@@ -96,6 +109,21 @@ class SiteAddActivity: AppCompatActivity() {
             blogData.url = data.rssUrl
             blogData.lastUpdate = data.date
         }
+    }
+
+    // ブログ更新確認のジョブを作成する
+    fun createJob() {
+        createChannel(this)
+
+        val fetchJob = JobInfo.Builder(
+                1,
+                ComponentName(this, PollingJob::class.java))
+                .setPeriodic(TimeUnit.MINUTES.toMillis(15))
+                .setPersisted(true)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .build()
+
+        getSystemService(JobScheduler::class.java).schedule(fetchJob)
     }
 }
 
