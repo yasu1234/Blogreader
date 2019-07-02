@@ -14,8 +14,8 @@ class BlogDetailEntity {
     @get:Element(name = "link", required = false)
     var link: String? = null
 
-    @set:Element(name = "date", required = false)
-    @get:Element(name = "date", required = false)
+    @set:Element(name = "pubDate", required = false)
+    @get:Element(name = "pubDate", required = false)
     var date: String? = null
 
     @set:Element(name = "description", required = false)

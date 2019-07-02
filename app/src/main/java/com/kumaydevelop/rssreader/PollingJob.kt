@@ -49,7 +49,8 @@ class PollingJob() : JobService() {
                         .subscribe( {
                             val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
                             val formatDate = formatter.parse(it.lastBuildDate)
-                            if (blog.lastUpdate.after(formatDate)) {
+                            // 最新の記事があれば通知を行う
+                            if (blog.lastUpdate.before(formatDate)) {
                                 realm.executeTransactionAsync {
                                     blog.lastUpdate = formatDate
                                 }
