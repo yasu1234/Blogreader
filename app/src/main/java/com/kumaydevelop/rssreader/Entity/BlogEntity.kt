@@ -16,8 +16,8 @@ class BlogEntity {
     @get:Element(name = "lastBuildDate", required = false)
     var lastBuildDate: String? = ""
 
-    @set:ElementList(entry = "item", inline = false)
-    @get:ElementList(entry = "item", inline = false)
+    @set:ElementList(entry = "item", inline = true, required = false)
+    @get:ElementList(entry = "item", inline = true, required = false)
     var articleEntities: List<BlogDetailEntity>? = null
 
     @set:Element(name = "channel")

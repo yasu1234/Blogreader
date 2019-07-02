@@ -14,6 +14,7 @@ import com.kumaydevelop.rssreader.Model.BlogModel
 private const val CHANNEL_ID = "update_channel"
 private const val REQUEST_CODE = 1
 
+// チャンネルを作成する
 fun createChannel(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
@@ -31,11 +32,13 @@ fun createChannel(context: Context) {
 }
 
 fun notifyUpdate(context: Context, blog: BlogModel) {
+    // 通知をタップしたときに一覧画面を開くようにする
     val intent = Intent(context, MainActivity::class.java)
 
     val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT)
 
     val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("記事更新")
             .setContentText(blog.title + "の記事が更新しました")
             .setContentIntent(pendingIntent)

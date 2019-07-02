@@ -2,13 +2,13 @@ package com.kumaydevelop.rssreader.Adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.kumaydevelop.rssreader.Entity.BlogDetailEntity
 import com.kumaydevelop.rssreader.R
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,10 +41,28 @@ class ArticlesAdapter(private val context: Context,
             it.title.text = articles[position].title
             val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
             val formatDate = formatter.parse(articles[position].date)
-            it.date.text = DateFormat.format("yyyy/MM/dd HH:mm",formatDate).toString()
+            val df = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+            val formatDateString = df.format(formatDate)
+            it.date.text = formatDateString
             it.url.text = articles[position].link
         }
 
         holder.setUp(articles[position])
+    }
+
+    fun String.toDate(pattern: String = "yyyy/MM/dd HH:mm:ss"): Date? {
+        val sdFormat = try {
+            SimpleDateFormat(pattern)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+        val date = sdFormat?.let {
+            try {
+                it.parse(this)
+            } catch (e: ParseException){
+                null
+            }
+        }
+        return date
     }
 }
