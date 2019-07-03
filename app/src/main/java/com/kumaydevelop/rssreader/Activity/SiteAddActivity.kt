@@ -76,7 +76,6 @@ class SiteAddActivity: AppCompatActivity() {
                             .subscribeOn(Schedulers.newThread())
                             .subscribe( {
                                 val blog = it
-                                android.widget.ProgressBar.INVISIBLE
                                 alert(it.title + "を登録しますか?") {
                                     yesButton {
                                         register(blog!!, rssUrlText.text.toString())

@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.kumaydevelop.rssreader.Model.BlogModel
+import com.kumaydevelop.rssreader.R
 import io.realm.OrderedRealmCollection
 import io.realm.RealmBaseAdapter
 
 class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<BlogModel>(data) {
 
     inner class ViewHolder(cell: View) {
-        val date = cell.findViewById<TextView>(android.R.id.text2)
-        val title = cell.findViewById<TextView>(android.R.id.text1)
+        val title = cell.findViewById<TextView>(R.id.titleView)
+        val date = cell.findViewById<TextView>(R.id.dateView)
+        val id = cell.findViewById<TextView>(R.id.idView)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -23,7 +25,7 @@ class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<B
         when (convertView) {
             null -> {
                 val inflater = LayoutInflater.from(parent?.context)
-                view = inflater.inflate(android.R.layout.simple_expandable_list_item_2, parent, false)
+                view = inflater.inflate(R.layout.blog_list_content, parent, false)
                 viewHolder = ViewHolder(view)
                 view.tag = viewHolder
             }
@@ -38,7 +40,8 @@ class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<B
             // 年月日と時間を表示する
             viewHolder.date.setText(DateFormat.format("yyyy/MM/dd HH:mm", blog.lastUpdate).toString())
             viewHolder.title.setText(blog.title)
-
+            // idはサイズ0で保持しておく
+            viewHolder.id.setText(blog.id.toString())
         }
         return view
     }
