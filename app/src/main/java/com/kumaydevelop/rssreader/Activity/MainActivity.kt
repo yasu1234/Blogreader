@@ -1,5 +1,6 @@
 package com.kumaydevelop.rssreader.Activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             count = Constants.DisplayCount.values().filter { it.code == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
         }
 
-
         val listView = findViewById<ListView>(R.id.blogList)
         listView.adapter = BlogAdapter(blogs)
 
@@ -63,10 +63,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // 記事一覧に遷移
         listView.setOnItemClickListener { parent, view, position, id ->
-            val title = view.findViewById<TextView>(android.R.id.text1)
-            val rssData = realm.where<BlogModel>().equalTo("title", title.text.toString()).findFirst()
+            val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
+            val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
             startActivity<ListArticlesActivity>("RSSURL_KEY" to rssData!!.url, "DISPLAYCOUNT" to count)
+        }
+
+        // 長押しでブログ削除
+        listView.setOnItemLongClickListener { parent, view, position, id ->
+            val title = view.findViewById<TextView>(R.id.titleView).text
+            val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
+            var dialog = com.kumaydevelop.rssreader.AlertDialog()
+            dialog.title = title.toString() + "を削除しますか？"
+            dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
+                realm.executeTransaction {
+                    rssData!!.deleteFromRealm()
+                }
+                val adapter = listView.adapter as BlogAdapter
+                adapter.notifyDataSetChanged()
+            }
+            dialog.show(supportFragmentManager, null)
+
+            return@setOnItemLongClickListener true
+
         }
     }
 
