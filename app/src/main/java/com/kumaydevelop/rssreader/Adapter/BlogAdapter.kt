@@ -38,7 +38,7 @@ class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<B
         adapterData?.run {
             val blog = get(position)
             // 年月日と時間を表示する
-            viewHolder.date.setText(DateFormat.format("yyyy/MM/dd HH:mm", blog.lastUpdate).toString())
+            viewHolder.date.setText(DateFormat.format("yyyy/MM/dd HH:mm:ss", blog.lastUpdate).toString())
             viewHolder.title.setText(blog.title)
             // idはサイズ0で保持しておく
             viewHolder.id.setText(blog.id.toString())

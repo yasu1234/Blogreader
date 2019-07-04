@@ -2,6 +2,7 @@ package com.kumaydevelop.rssreader
 
 import android.app.job.JobParameters
 import android.app.job.JobService
+import android.content.Context
 import android.util.Log
 import com.kumaydevelop.rssreader.Interface.RssClient
 import com.kumaydevelop.rssreader.Model.BlogModel
@@ -26,7 +27,7 @@ class PollingJob() : JobService() {
         val blogs = realm.copyFromRealm(realm.where(BlogModel::class.java).findAll())!!
         val setting = realm.copyFromRealm(realm.where(SettingModel::class.java).findFirst())!!
 
-        val count = Constants.DisplayCount.values().filter { it.code == setting.displayCountCode }.map { it.count }.get(0)
+        val preference = getSharedPreferences("job_preference", Context.MODE_PRIVATE)
 
         if (blogs.size != 0) {
             for (blog in blogs) {
@@ -47,15 +48,16 @@ class PollingJob() : JobService() {
                 response.observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.newThread())
                         .subscribe( {
+                            val lastFetchTime = preference.getLong("last_published_time" + blog.id.toString(), 0L)
                             val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
                             val formatDate = formatter.parse(it.lastBuildDate)
                             // 最新の記事があれば通知を行う
-                            if (blog.lastUpdate.before(formatDate)) {
-                                realm.executeTransactionAsync {
-                                    blog.lastUpdate = formatDate
-                                }
+                            if (lastFetchTime > 0 && lastFetchTime < formatDate.time) {
                                 notifyUpdate(this, blog)
+
+                                preference.edit().putBoolean("isUpdate", true).apply()
                             }
+                            preference.edit().putLong("last_published_time" + blog.id.toString(), formatDate.time).apply()
                         }, {
                             Log.e("ERROR", it.cause.toString())
                         })

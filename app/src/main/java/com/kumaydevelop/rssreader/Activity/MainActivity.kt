@@ -1,5 +1,6 @@
 package com.kumaydevelop.rssreader.Activity
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -22,6 +23,7 @@ import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.startActivity
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -51,6 +53,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             val setting = realm.where<SettingModel>().findAll()
             count = Constants.DisplayCount.values().filter { it.code == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
+        }
+
+        val preference = getSharedPreferences("job_preference", Context.MODE_PRIVATE)
+        val isUpdate = preference.getBoolean("isUpdate", false)
+
+        // 記事の更新があった場合は最終更新日時を更新して表示させる
+        if (isUpdate) {
+            for (blog in blogs) {
+                val lastFetchTime = preference.getLong("last_published_time" + blog.id.toString(), 0L)
+                if (lastFetchTime != 0L) {
+                    realm.executeTransaction {
+                        val date =  Date(lastFetchTime)
+                        val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+                        val date_string = sdf.format(date)
+                        val formatDate = sdf.parse(date_string)
+                        blog.lastUpdate = formatDate
+                    }
+                }
+            }
+            preference.edit().putBoolean("isUpdate", false).apply()
         }
 
         val listView = findViewById<ListView>(R.id.blogList)
