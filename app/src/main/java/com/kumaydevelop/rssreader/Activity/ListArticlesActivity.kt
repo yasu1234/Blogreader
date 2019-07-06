@@ -1,5 +1,6 @@
 package com.kumaydevelop.rssreader.Activity
 
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
@@ -78,9 +79,16 @@ class ListArticlesActivity : AppCompatActivity() {
                         // 区切り線を入れる
                         val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
                         articlRecyclerView.addItemDecoration(itemDecoration)
+                        progressBarBlogDetail.visibility = android.widget.ProgressBar.INVISIBLE
                     }
 
                 }, {
+                    var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                    dialog.title = "記事を取得できませんでした。"
+                    dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                        finish()
+                    }
+                    dialog.show(supportFragmentManager, null)
                     Log.e("ERROR", it.cause.toString())
                 }))
 

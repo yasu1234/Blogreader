@@ -52,7 +52,7 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
             dialog.show(supportFragmentManager, null)
         }
 
-        cancelButton.setOnClickListener {
+        backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
