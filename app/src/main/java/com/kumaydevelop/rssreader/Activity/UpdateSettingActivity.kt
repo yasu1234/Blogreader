@@ -59,10 +59,12 @@ class UpdateSettingActivity:  AppCompatActivity() {
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()
             }
+            dialog.onCancelClickListener = DialogInterface.OnClickListener { dialog, which ->
+            }
             dialog.show(supportFragmentManager, null)
         }
 
-        cancelButton.setOnClickListener {
+        backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

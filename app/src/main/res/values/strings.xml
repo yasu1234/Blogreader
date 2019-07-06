@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">Rssリーダー</string>
+    <string name="app_name">Blogリーダー</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">メニュー一覧</string>
+    <string name="blog_list">ブログ一覧</string>
+    <string name="article_list">記事一覧</string>
+    <string name="add_blog">ブログ登録</string>
+    <string name="display_count">表示件数設定</string>
+    <string name="update_time_setteing">更新確認時間設定</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 </resources>

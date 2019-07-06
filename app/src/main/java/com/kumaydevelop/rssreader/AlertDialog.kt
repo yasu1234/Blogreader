@@ -9,18 +9,23 @@ import android.support.v7.app.AlertDialog
 class AlertDialog : DialogFragment() {
     var title = "title"
     var okText = "OK"
+    var cancelText = "キャンセル"
     var onOkClickListener : DialogInterface.OnClickListener? = null
+    var onCancelClickListener : DialogInterface.OnClickListener? = null
 
+    // OKボタンとキャンセルボタンを作成
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(context!!)
         builder.setTitle(title)
                 .setPositiveButton(okText, onOkClickListener)
+        builder.setTitle(title)
+                .setNegativeButton(cancelText, onCancelClickListener)
         return builder.create()
     }
 
     override fun onPause() {
         super.onPause()
-        // ダイアログを閉じる場合
+        // ダイアログを閉じる
         dismiss()
     }
 }
