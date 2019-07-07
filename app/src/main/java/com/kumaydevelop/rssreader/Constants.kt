@@ -26,6 +26,8 @@ class Constants {
         const val DOUBLE_SLASH = "//"
         const val FROM_YEAR_TO_SECONDS = "yyyy/MM/dd HH:mm:ss"
         const val TIMEZONE_ISO = "EEE, dd MMM yyyy HH:mm:ss Z"
+        const val HTTP = "http://"
+        const val HTTPS = "https://"
     }
 
 }
