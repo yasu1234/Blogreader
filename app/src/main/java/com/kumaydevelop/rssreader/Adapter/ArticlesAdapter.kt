@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.kumaydevelop.rssreader.Constants
 import com.kumaydevelop.rssreader.Entity.BlogDetailEntity
 import com.kumaydevelop.rssreader.R
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,33 +36,18 @@ class ArticlesAdapter(private val context: Context,
         return ArticleViewHolder(rowView, articleClicked)
     }
 
+    // ビューの表示する値の設定
     override fun onBindViewHolder(holder: ArticleViewHolder?, position: Int) {
         holder!!.let {
             it.title.text = articles[position].title
-            val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
+            val formatter = SimpleDateFormat(Constants.TIMEZONE_ISO, Locale.US)
             val formatDate = formatter.parse(articles[position].date)
-            val df = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+            val df = SimpleDateFormat(Constants.FROM_YEAR_TO_SECONDS)
             val formatDateString = df.format(formatDate)
             it.date.text = formatDateString
             it.url.text = articles[position].link
         }
 
         holder.setUp(articles[position])
-    }
-
-    fun String.toDate(pattern: String = "yyyy/MM/dd HH:mm:ss"): Date? {
-        val sdFormat = try {
-            SimpleDateFormat(pattern)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-        val date = sdFormat?.let {
-            try {
-                it.parse(this)
-            } catch (e: ParseException){
-                null
-            }
-        }
-        return date
     }
 }

@@ -9,18 +9,14 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.kumaydevelop.rssreader.Adapter.ArticlesAdapter
+import com.kumaydevelop.rssreader.Dialog.AlertDialog
 import com.kumaydevelop.rssreader.Entity.BlogDetailEntity
-import com.kumaydevelop.rssreader.Interface.RssClient
+import com.kumaydevelop.rssreader.General.Util
 import com.kumaydevelop.rssreader.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_article_list.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 class ListArticlesActivity : AppCompatActivity() {
 
@@ -37,22 +33,8 @@ class ListArticlesActivity : AppCompatActivity() {
 
         articlRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // rssのURLを作成(ブログによって/以下が違うため動的に作成)
-        val url = rssUrl.split("//")
-        val baseUrl = url.get(1).split("/").get(0)
-        val addUrl = url.get(1).split("/").get(1)
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
-                .build()
-        val retrofit = Retrofit.Builder()
-                .baseUrl(url.get(0) + "//" + baseUrl + "/")
-                .client(client)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-
-        val response = retrofit.create(RssClient::class.java).get(addUrl)
+        val splitedUrl = Util.splitUrl(rssUrl)
+        val response = Util.createRetrofit(splitedUrl)
 
         // 非同期で記事を取得し、一覧表示する
         compositeDisposable?.add(response.observeOn(AndroidSchedulers.mainThread())
@@ -83,7 +65,7 @@ class ListArticlesActivity : AppCompatActivity() {
                     }
 
                 }, {
-                    var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                    var dialog = AlertDialog()
                     dialog.title = "記事を取得できませんでした。"
                     dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                         finish()

@@ -1,4 +1,4 @@
-package com.kumaydevelop.rssreader
+package com.kumaydevelop.rssreader.General
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -18,7 +18,7 @@ private const val REQUEST_CODE = 1
 fun createChannel(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
-            CHANNEL_ID,
+                CHANNEL_ID,
             "新着",
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {

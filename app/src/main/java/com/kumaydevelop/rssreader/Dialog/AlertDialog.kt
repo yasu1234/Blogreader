@@ -1,4 +1,4 @@
-package com.kumaydevelop.rssreader
+package com.kumaydevelop.rssreader.Dialog
 
 import android.app.Dialog
 import android.content.DialogInterface

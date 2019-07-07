@@ -14,6 +14,8 @@ import android.widget.ListView
 import android.widget.TextView
 import com.kumaydevelop.rssreader.Adapter.BlogAdapter
 import com.kumaydevelop.rssreader.Constants
+import com.kumaydevelop.rssreader.Dialog.AlertDialog
+import com.kumaydevelop.rssreader.General.createChannel
 import com.kumaydevelop.rssreader.Model.BlogModel
 import com.kumaydevelop.rssreader.Model.SettingModel
 import com.kumaydevelop.rssreader.R
@@ -43,16 +45,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val maxId = realm.where<SettingModel>().max("id")
                 val nextId = (maxId?.toLong() ?: 0L) + 1
                 val settingData = realm.createObject<SettingModel>(nextId)
-                settingData.displayCountCode = "4"
-                settingData.updateTimeCode = "2"
+                settingData.displayCountCode = Constants.DisplayCount.FIFTY.ordinal.toString()
+                settingData.updateTimeCode = Constants.UpdateTime.HOUR.ordinal.toString()
                 settingData.updateDate = Date()
+                // 通知用のチャンネルを作成する
+                createChannel(this)
             }
 
-            count = 50
+            count = Constants.DisplayCount.FIFTY.ordinal
 
         } else {
             val setting = realm.where<SettingModel>().findAll()
-            count = Constants.DisplayCount.values().filter { it.code == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
+            count = Constants.DisplayCount.values().filter { it.ordinal.toString() == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
         }
 
         val preference = getSharedPreferences("job_preference", Context.MODE_PRIVATE)
@@ -96,7 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listView.setOnItemLongClickListener { parent, view, position, id ->
             val title = view.findViewById<TextView>(R.id.titleView).text
             val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
-            var dialog = com.kumaydevelop.rssreader.AlertDialog()
+            var dialog = AlertDialog()
             dialog.title = title.toString() + "を削除しますか？"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
@@ -133,14 +137,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // ナビゲーションメニューの選択時の処理
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            // ブログ追加
             R.id.nav_camera -> {
                 val intent = Intent(this, SiteAddActivity::class.java)
                 startActivity(intent)
             }
+            // 表示件数設定
             R.id.nav_gallery -> {
                 val intent = Intent(this, CountSettingActivity::class.java)
                 startActivity(intent)
             }
+            // 更新確認頻度設定
             R.id.nav_slideshow -> {
                 val intent = Intent(this, UpdateSettingActivity::class.java)
                 startActivity(intent)

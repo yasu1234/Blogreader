@@ -10,14 +10,15 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.kumaydevelop.rssreader.Constants
+import com.kumaydevelop.rssreader.Dialog.AlertDialog
+import com.kumaydevelop.rssreader.General.Util
 import com.kumaydevelop.rssreader.Model.SettingModel
-import com.kumaydevelop.rssreader.PollingJob
 import com.kumaydevelop.rssreader.R
+import com.kumaydevelop.rssreader.Service.PollingJob
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_setting_count.*
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class UpdateSettingActivity:  AppCompatActivity() {
 
@@ -44,22 +45,21 @@ class UpdateSettingActivity:  AppCompatActivity() {
                 data.updateDate = Date()
             }
 
+            // 更新確認頻度を変えた状態でJobを更新
             val fetchJob = JobInfo.Builder(
                     1,
                     ComponentName(this, PollingJob::class.java))
-                    .setPeriodic(setUpdateTime(data.updateTimeCode))
+                    .setPeriodic(Util.setUpdateTime(data.updateTimeCode))
                     .setPersisted(true)
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                     .build()
 
             getSystemService(JobScheduler::class.java).schedule(fetchJob)
 
-            var dialog = com.kumaydevelop.rssreader.AlertDialog()
+            var dialog = AlertDialog()
             dialog.title = "更新しました"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()
-            }
-            dialog.onCancelClickListener = DialogInterface.OnClickListener { dialog, which ->
             }
             dialog.show(supportFragmentManager, null)
         }
@@ -78,55 +78,27 @@ class UpdateSettingActivity:  AppCompatActivity() {
     // 初期表示時に登録している件数をチェックしている状態にする
     fun setRadioChecked(updateTimeCode : String) {
         when (updateTimeCode) {
-            Constants.UpdateTime.FIFTEENMINUTES.code -> {
+            Constants.UpdateTime.FIFTEENMINUTES.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio15minutes)
             }
-            Constants.UpdateTime.THIRTYMINUTES.code -> {
+            Constants.UpdateTime.THIRTYMINUTES.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio30minutes)
             }
-            Constants.UpdateTime.HOUR.code -> {
+            Constants.UpdateTime.HOUR.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio1hour)
             }
-            Constants.UpdateTime.THREEHOURS.code -> {
+            Constants.UpdateTime.THREEHOURS.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio3hours)
             }
-            Constants.UpdateTime.SIXHOURS.code -> {
+            Constants.UpdateTime.SIXHOURS.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio6hours)
             }
-            Constants.UpdateTime.TWENTYHOUES.code -> {
+            Constants.UpdateTime.TWENTYHOUES.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio12hours)
             }
-            Constants.UpdateTime.DAY.code -> {
+            Constants.UpdateTime.DAY.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio24hours)
             }
         }
-    }
-
-    fun setUpdateTime(updateTimeCode : String): Long {
-        when (updateTimeCode) {
-            Constants.UpdateTime.FIFTEENMINUTES.code -> {
-                return TimeUnit.MINUTES.toMillis(15)
-            }
-            Constants.UpdateTime.THIRTYMINUTES.code -> {
-                return TimeUnit.MINUTES.toMillis(30)
-            }
-            Constants.UpdateTime.HOUR.code -> {
-                return TimeUnit.HOURS.toMillis(1)
-            }
-            Constants.UpdateTime.THREEHOURS.code -> {
-                return TimeUnit.HOURS.toMillis(3)
-            }
-            Constants.UpdateTime.SIXHOURS.code -> {
-                return TimeUnit.HOURS.toMillis(6)
-            }
-            Constants.UpdateTime.TWENTYHOUES.code -> {
-                return TimeUnit.HOURS.toMillis(12)
-            }
-            Constants.UpdateTime.DAY.code -> {
-                return TimeUnit.HOURS.toMillis(24)
-            }
-        }
-        // 設定ミスの場合は1時間で設定
-        return TimeUnit.HOURS.toMillis(1)
     }
 }
