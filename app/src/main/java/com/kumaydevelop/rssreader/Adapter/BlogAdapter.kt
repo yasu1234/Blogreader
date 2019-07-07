@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.kumaydevelop.rssreader.Constants
 import com.kumaydevelop.rssreader.Model.BlogModel
 import com.kumaydevelop.rssreader.R
 import io.realm.OrderedRealmCollection
@@ -12,6 +13,7 @@ import io.realm.RealmBaseAdapter
 
 class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<BlogModel>(data) {
 
+    // 画面の構成
     inner class ViewHolder(cell: View) {
         val title = cell.findViewById<TextView>(R.id.titleView)
         val date = cell.findViewById<TextView>(R.id.dateView)
@@ -38,7 +40,7 @@ class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<B
         adapterData?.run {
             val blog = get(position)
             // 年月日と時間を表示する
-            viewHolder.date.setText(DateFormat.format("yyyy/MM/dd HH:mm:ss", blog.lastUpdate).toString())
+            viewHolder.date.setText(DateFormat.format(Constants.FROM_YEAR_TO_SECONDS, blog.lastUpdate).toString())
             viewHolder.title.setText(blog.title)
             // idはサイズ0で保持しておく
             viewHolder.id.setText(blog.id.toString())

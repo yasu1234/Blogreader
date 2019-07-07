@@ -1,4 +1,4 @@
-package com.kumaydevelop.rssreader
+package com.kumaydevelop.rssreader.General
 
 import android.util.Log
 import okhttp3.OkHttpClient

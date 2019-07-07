@@ -1,4 +1,4 @@
-package com.kumaydevelop.rssreader
+package com.kumaydevelop.rssreader.General
 
 import android.content.Context
 import android.support.v4.content.AsyncTaskLoader
@@ -31,6 +31,7 @@ class getRssUrl(context: Context, url: String): AsyncTaskLoader<Rss>(context) {
     }
 
     override fun deliverResult(data: Rss?) {
+        // 結果が破棄されていたり取得できない場合は返さない
         if (isReset || data == null) return
 
         cache = data
@@ -38,6 +39,7 @@ class getRssUrl(context: Context, url: String): AsyncTaskLoader<Rss>(context) {
     }
 
     override fun onStartLoading() {
+        // キャッシュがあれば、キャッシュを返す
         if (cache != null) {
             deliverResult(cache)
         }
@@ -47,6 +49,7 @@ class getRssUrl(context: Context, url: String): AsyncTaskLoader<Rss>(context) {
         }
     }
 
+    // 実行中の処理をキャンセルする
     override fun onStopLoading() {
         cancelLoad()
     }

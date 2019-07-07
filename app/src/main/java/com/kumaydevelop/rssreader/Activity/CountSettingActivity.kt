@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.kumaydevelop.rssreader.Constants
+import com.kumaydevelop.rssreader.Dialog.AlertDialog
 import com.kumaydevelop.rssreader.Model.SettingModel
 import com.kumaydevelop.rssreader.R
 import io.realm.Realm
@@ -44,7 +45,7 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
                 }
             }
 
-            var dialog = com.kumaydevelop.rssreader.AlertDialog()
+            var dialog = AlertDialog()
             dialog.title = "更新しました"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()
@@ -67,19 +68,19 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
     // 初期表示時に登録している件数をチェックしている状態にする
     fun setRadioChecked(displayCount : String) {
         when (displayCount) {
-            Constants.DisplayCount.TEN.code -> {
+            Constants.DisplayCount.TEN.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio10Count)
             }
-            Constants.DisplayCount.TWENTY.code -> {
+            Constants.DisplayCount.TWENTY.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio20Count)
             }
-            Constants.DisplayCount.THIRTY.code -> {
+            Constants.DisplayCount.THIRTY.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio30Count)
             }
-            Constants.DisplayCount.FORTY.code -> {
+            Constants.DisplayCount.FORTY.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio40Count)
             }
-            Constants.DisplayCount.FIFTY.code -> {
+            Constants.DisplayCount.FIFTY.ordinal.toString() -> {
                 radioGroup.check(R.id.Radio50Count)
             }
         }

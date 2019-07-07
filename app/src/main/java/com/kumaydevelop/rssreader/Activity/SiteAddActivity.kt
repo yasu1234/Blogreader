@@ -13,24 +13,24 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
-import com.kumaydevelop.rssreader.*
+import com.kumaydevelop.rssreader.Constants
+import com.kumaydevelop.rssreader.Dialog.AlertDialog
 import com.kumaydevelop.rssreader.Entity.BlogEntity
-import com.kumaydevelop.rssreader.Interface.RssClient
+import com.kumaydevelop.rssreader.General.Rss
+import com.kumaydevelop.rssreader.General.Util
+import com.kumaydevelop.rssreader.General.getRssUrl
 import com.kumaydevelop.rssreader.Model.BlogModel
+import com.kumaydevelop.rssreader.Model.SettingModel
+import com.kumaydevelop.rssreader.R
+import com.kumaydevelop.rssreader.Service.PollingJob
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_add_site.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class SiteAddActivity: AppCompatActivity() {
 
@@ -44,19 +44,21 @@ class SiteAddActivity: AppCompatActivity() {
         rssText.isCursorVisible = false
         rssText.isFocusable = false
         progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-        confirmButton.setText("RssURL確認")
+        confirmButton.setText(Constants.RSS_CONFIRM)
         realm = Realm.getDefaultInstance()
+        val setting = realm.where<SettingModel>().findFirst()!!
 
         confirmButton.setOnClickListener {
             if (urlText.text.toString().isNullOrBlank()) {
-                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                var dialog = AlertDialog()
                 dialog.title = "URLを入力してください"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
                 dialog.show(supportFragmentManager, null)
 
             } else {
-                if (confirmButton.text == "RssURL確認") {
+                // RSSのURLを取得時の処理
+                if (confirmButton.text == Constants.RSS_CONFIRM) {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // RSSのURLの取得を行う
                     val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
@@ -64,21 +66,9 @@ class SiteAddActivity: AppCompatActivity() {
                 } else {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // rssのURLを作成(ブログによって/以下が違うため動的に作成)
-                    val url = rssText.text.toString().split("//")
-                    val baseUrl = url.get(1).split("/").get(0)
-                    val addUrl = url.get(1).split("/").get(1)
-                    val loggingInterceptor = HttpLoggingInterceptor()
-                    loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-                    val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
-                            .build()
-                    val retrofit = Retrofit.Builder()
-                            .baseUrl(url.get(0) + "//" + baseUrl + "/")
-                            .client(client)
-                            .addConverterFactory(SimpleXmlConverterFactory.create())
-                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                            .build()
+                    val splitedUrl = Util.splitUrl(rssText.text.toString())
 
-                    val response = retrofit.create(RssClient::class.java).get(addUrl)
+                    val response = Util.createRetrofit(splitedUrl)
 
                     // 非同期で記事を取得し、登録確認アラートを表示させる
                     response.observeOn(AndroidSchedulers.mainThread())
@@ -86,11 +76,11 @@ class SiteAddActivity: AppCompatActivity() {
                             .subscribe( {
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                                 val blog = it
-                                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                                var dialog = AlertDialog()
                                 dialog.title = it.title + "を登録しますか?"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                     register(blog!!, rssText.text.toString())
-                                    createJob()
+                                    createJob(setting)
                                     finish()
                                 }
                                 dialog.onCancelClickListener = DialogInterface.OnClickListener { dialog, which ->
@@ -99,7 +89,7 @@ class SiteAddActivity: AppCompatActivity() {
                             }, {
                                 Log.e("ERROR", it.cause.toString())
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                                var dialog = AlertDialog()
                                 dialog.title = "データを取得できませんでした。"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                 }
@@ -109,6 +99,7 @@ class SiteAddActivity: AppCompatActivity() {
             }
         }
 
+        // ブログ一覧に戻る
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -142,14 +133,15 @@ class SiteAddActivity: AppCompatActivity() {
         override fun onLoadFinished(loader: Loader<Rss>?, data: Rss?) {
             if (data?.feedUrl.isNullOrBlank()) {
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                var dialog = com.kumaydevelop.rssreader.AlertDialog()
+                var dialog = AlertDialog()
                 dialog.title = "Rss2.0形式に対応していません"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
                 dialog.show(supportFragmentManager, null)
             } else {
+                // RSSのURLを取得できた場合は登録ボタンに変更する
                 rssText.setText(data!!.feedUrl)
-                confirmButton.setText("登録")
+                confirmButton.setText(Constants.REGISTER)
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
             }
         }
@@ -161,7 +153,7 @@ class SiteAddActivity: AppCompatActivity() {
     // ブログの情報を登録する
     fun register(data: BlogEntity, url: String) {
         realm.executeTransaction {
-            val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
+            val formatter = SimpleDateFormat(Constants.TIMEZONE_ISO, Locale.US)
             val formatDate = formatter.parse(data.lastBuildDate)
             val maxId = realm.where<BlogModel>().max("id")
             // 登録のときのIdは+1した状態にする
@@ -174,13 +166,12 @@ class SiteAddActivity: AppCompatActivity() {
     }
 
     // ブログ更新確認のジョブを作成する
-    fun createJob() {
-        createChannel(this)
+    fun createJob(setting : SettingModel) {
 
         val fetchJob = JobInfo.Builder(
                 1,
                 ComponentName(this, PollingJob::class.java))
-                .setPeriodic(TimeUnit.MINUTES.toMillis(15))
+                .setPeriodic(Util.setUpdateTime(setting.updateTimeCode))
                 .setPersisted(true)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .build()
