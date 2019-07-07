@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
@@ -56,17 +57,26 @@ class SiteAddActivity: AppCompatActivity() {
                 }
                 dialog.show(supportFragmentManager, null)
 
+            } else if (urlText.text.toString().trim().length < 7
+                    || !(urlText.text.toString().trim().substring(0,7) == Constants.HTTP
+                    || urlText.text.toString().trim().substring(0,8) == Constants.HTTPS)) {
+                var dialog = AlertDialog()
+                dialog.title = "URL形式に誤りがあります"
+                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                }
+                dialog.show(supportFragmentManager, null)
             } else {
                 // RSSのURLを取得時の処理
                 if (confirmButton.text == Constants.RSS_CONFIRM) {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // RSSのURLの取得を行う
                     val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
-                    supportLoaderManager.initLoader(0, args, getRssUrlCallback)
+                    // 誤ったURL入力後に別のURLを確認できるようにrestartLoaderを使う
+                    supportLoaderManager.restartLoader(0, args, getRssUrlCallback)
                 } else {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // rssのURLを作成(ブログによって/以下が違うため動的に作成)
-                    val splitedUrl = Util.splitUrl(rssText.text.toString())
+                    val splitedUrl = Util.splitUrl(rssText.text.toString().trim())
 
                     val response = Util.createRetrofit(splitedUrl)
 
@@ -78,6 +88,7 @@ class SiteAddActivity: AppCompatActivity() {
                                 val blog = it
                                 var dialog = AlertDialog()
                                 dialog.title = it.title + "を登録しますか?"
+                                dialog.cancelText = "キャンセル"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                     register(blog!!, rssText.text.toString())
                                     createJob(setting)
@@ -133,11 +144,14 @@ class SiteAddActivity: AppCompatActivity() {
         override fun onLoadFinished(loader: Loader<Rss>?, data: Rss?) {
             if (data?.feedUrl.isNullOrBlank()) {
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                var dialog = AlertDialog()
-                dialog.title = "Rss2.0形式に対応していません"
-                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                val handler = Handler()
+                handler.post {
+                    var dialog = AlertDialog()
+                    dialog.title = "データを取得できませんでした。"
+                    dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                    }
+                    dialog.show(supportFragmentManager, null)
                 }
-                dialog.show(supportFragmentManager, null)
             } else {
                 // RSSのURLを取得できた場合は登録ボタンに変更する
                 rssText.setText(data!!.feedUrl)

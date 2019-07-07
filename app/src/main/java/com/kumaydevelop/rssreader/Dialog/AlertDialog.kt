@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog
 class AlertDialog : DialogFragment() {
     var title = "title"
     var okText = "OK"
-    var cancelText = "キャンセル"
+    var cancelText = ""
     var onOkClickListener : DialogInterface.OnClickListener? = null
     var onCancelClickListener : DialogInterface.OnClickListener? = null
 

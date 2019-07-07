@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
             var dialog = AlertDialog()
             dialog.title = title.toString() + "を削除しますか？"
+            dialog.cancelText = "キャンセル"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
                 realm.executeTransaction {

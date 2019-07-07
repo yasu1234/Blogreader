@@ -13,27 +13,28 @@ class getRssUrl(context: Context, url: String): AsyncTaskLoader<Rss>(context) {
     override fun loadInBackground(): Rss? {
         val response = getHttp(http)
         if (response != null) {
+            // タグからRSSURLを取得する
             Jsoup.connect(http).get().run {
                 val linkTag = select("link")
-                val aaList = linkTag.stream().filter { x ->
+                // application/rss+xml属性があるlinkタグのhrefを取得
+                val rssList = linkTag.stream().filter { x ->
                     x.toString().contains("application/rss+xml")
                 }.map { x -> x.attr("href") }.findFirst()
 
-                val rssLink = aaList.orElse("")
+                val rssLink = rssList.orElse("")
 
                 if (!rssLink.isNullOrBlank()) {
                     return Rss(feedUrl = rssLink)
                 }
             }
+
             return null
         }
         return null
     }
 
     override fun deliverResult(data: Rss?) {
-        // 結果が破棄されていたり取得できない場合は返さない
-        if (isReset || data == null) return
-
+        if (isReset) return
         cache = data
         super.deliverResult(data)
     }
