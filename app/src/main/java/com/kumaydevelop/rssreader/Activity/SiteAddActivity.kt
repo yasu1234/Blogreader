@@ -57,7 +57,7 @@ class SiteAddActivity: AppCompatActivity() {
                 }
                 dialog.show(supportFragmentManager, null)
 
-            } else if (urlText.text.toString().trim().length < 7
+            } else if (urlText.text.toString().trim().length < 10
                     || !(urlText.text.toString().trim().substring(0,7) == Constants.HTTP
                     || urlText.text.toString().trim().substring(0,8) == Constants.HTTPS)) {
                 var dialog = AlertDialog()
