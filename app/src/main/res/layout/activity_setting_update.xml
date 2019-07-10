@@ -91,7 +91,7 @@
         app:layout_constraintStart_toEndOf="@+id/saveButton" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/updateTimeLabel"
         android:layout_width="0dp"
         android:layout_height="27dp"
         android:layout_marginEnd="16dp"
