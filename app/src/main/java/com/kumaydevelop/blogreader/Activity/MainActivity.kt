@@ -52,11 +52,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 createChannel(this)
             }
 
-            count = Constants.DisplayCount.FIFTY.ordinal
+            count = Constants.DisplayCount.FIFTY.count
 
-        } else {
-            val setting = realm.where<SettingModel>().findAll()
-            count = Constants.DisplayCount.values().filter { it.ordinal.toString() == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
         }
 
         val preference = getSharedPreferences("job_preference", Context.MODE_PRIVATE)
@@ -93,6 +90,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listView.setOnItemClickListener { parent, view, position, id ->
             val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
             val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
+            val setting = realm.where<SettingModel>().findAll()
+            // 表示件数をintentとして一覧に渡す
+            count = Constants.DisplayCount.values().filter { it.ordinal.toString() == setting.get(0)!!.displayCountCode }.map { it.count }.get(0)
             startActivity<ListArticlesActivity>("RSSURL_KEY" to rssData!!.url, "DISPLAYCOUNT" to count)
         }
 
