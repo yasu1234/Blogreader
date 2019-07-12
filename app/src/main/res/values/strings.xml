@@ -7,7 +7,7 @@
     <string name="article_list">記事一覧</string>
     <string name="add_blog">ブログ登録</string>
     <string name="display_count">表示件数設定</string>
-    <string name="update_time_setteing">更新確認頻度設定</string>
+    <string name="update_time_setteing">更新確認タイミング設定</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 </resources>
