@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import com.kumaydevelop.blogreader.Activity.MainActivity
 import com.kumaydevelop.blogreader.Model.BlogModel
+import com.kumaydevelop.blogreader.R
 
 private const val CHANNEL_ID = "update_channel"
 private const val REQUEST_CODE = 1
@@ -38,7 +39,7 @@ fun notifyUpdate(context: Context, blog: BlogModel) {
     val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT)
 
     val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("記事更新")
             .setContentText(blog.title + "の記事が更新しました")
             .setContentIntent(pendingIntent)
