@@ -39,7 +39,7 @@ fun notifyUpdate(context: Context, blog: BlogModel) {
     val pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT)
 
     val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.icon)
             .setContentTitle("記事更新")
             .setContentText(blog.title + "の記事が更新しました")
             .setContentIntent(pendingIntent)
