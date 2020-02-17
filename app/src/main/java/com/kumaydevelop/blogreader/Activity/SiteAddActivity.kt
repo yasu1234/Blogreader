@@ -51,7 +51,7 @@ class SiteAddActivity: AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             if (urlText.text.toString().isNullOrBlank()) {
-                var dialog = AlertDialog()
+                val dialog = AlertDialog()
                 dialog.title = "URLを入力してください"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
@@ -60,7 +60,7 @@ class SiteAddActivity: AppCompatActivity() {
             } else if (urlText.text.toString().trim().length < 10
                     || !(urlText.text.toString().trim().substring(0,7) == Constants.HTTP
                     || urlText.text.toString().trim().substring(0,8) == Constants.HTTPS)) {
-                var dialog = AlertDialog()
+                val dialog = AlertDialog()
                 dialog.title = "URL形式に誤りがあります"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
@@ -86,7 +86,7 @@ class SiteAddActivity: AppCompatActivity() {
                             .subscribe( {
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                                 val blog = it
-                                var dialog = AlertDialog()
+                                val dialog = AlertDialog()
                                 dialog.title = it.title + "を登録しますか?"
                                 dialog.cancelText = "キャンセル"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
@@ -100,7 +100,7 @@ class SiteAddActivity: AppCompatActivity() {
                             }, {
                                 Log.e("ERROR", it.cause.toString())
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                                var dialog = AlertDialog()
+                                val dialog = AlertDialog()
                                 dialog.title = "データを取得できませんでした。"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                 }
@@ -146,7 +146,7 @@ class SiteAddActivity: AppCompatActivity() {
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                 val handler = Handler()
                 handler.post {
-                    var dialog = AlertDialog()
+                    val dialog = AlertDialog()
                     dialog.title = "データを取得できませんでした。"
                     dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                     }

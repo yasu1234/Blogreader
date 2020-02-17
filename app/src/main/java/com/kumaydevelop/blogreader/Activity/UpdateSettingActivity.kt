@@ -56,7 +56,7 @@ class UpdateSettingActivity:  AppCompatActivity() {
 
             getSystemService(JobScheduler::class.java).schedule(fetchJob)
 
-            var dialog = AlertDialog()
+            val dialog = AlertDialog()
             dialog.title = "更新しました"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()

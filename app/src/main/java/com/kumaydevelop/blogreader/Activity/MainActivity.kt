@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listView.setOnItemLongClickListener { parent, view, position, id ->
             val title = view.findViewById<TextView>(R.id.titleView).text
             val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
-            var dialog = AlertDialog()
+            val dialog = AlertDialog()
             dialog.title = title.toString() + "を削除しますか？"
             dialog.cancelText = "キャンセル"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->

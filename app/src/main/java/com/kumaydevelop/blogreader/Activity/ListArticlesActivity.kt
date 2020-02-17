@@ -65,7 +65,7 @@ class ListArticlesActivity : AppCompatActivity() {
                     }
 
                 }, {
-                    var dialog = AlertDialog()
+                    val dialog = AlertDialog()
                     dialog.title = "記事を取得できませんでした。"
                     dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                         finish()

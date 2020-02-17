@@ -45,7 +45,7 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
                 }
             }
 
-            var dialog = AlertDialog()
+            val dialog = AlertDialog()
             dialog.title = "更新しました"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()
