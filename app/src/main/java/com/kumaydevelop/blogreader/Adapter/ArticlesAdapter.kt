@@ -37,7 +37,7 @@ class ArticlesAdapter(private val context: Context,
     }
 
     // ビューの表示する値の設定
-    override fun onBindViewHolder(holder: ArticleViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         holder!!.let {
             it.title.text = articles[position].title
             val formatter = SimpleDateFormat(Constants.TIMEZONE_ISO, Locale.US)

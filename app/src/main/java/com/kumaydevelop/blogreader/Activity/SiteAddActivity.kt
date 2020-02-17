@@ -138,10 +138,10 @@ class SiteAddActivity: AppCompatActivity() {
     // LoaderCallbacksの関数をオーバーライドして、処理を変更したコールバックオブジェクトを作成する
     private val getRssUrlCallback : LoaderManager.LoaderCallbacks<Rss> = object : LoaderManager.LoaderCallbacks<Rss> {
 
-        override fun onLoaderReset(loader: Loader<Rss>?) {
+        override fun onLoaderReset(loader: Loader<Rss>) {
         }
 
-        override fun onLoadFinished(loader: Loader<Rss>?, data: Rss?) {
+        override fun onLoadFinished(loader: Loader<Rss>, data: Rss?) {
             if (data?.feedUrl.isNullOrBlank()) {
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                 val handler = Handler()
