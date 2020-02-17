@@ -45,7 +45,7 @@ class ListArticlesActivity : AppCompatActivity() {
                     val blog = it.articleEntities
                     if (blog!!.size != 0) {
                         for (i in 0 until displayCount) {
-                            if (i > blog!!.size -1) {
+                            if (i > blog.size -1) {
                                 break
                             }
                             articles.add(blog[i])
