@@ -35,7 +35,7 @@ class PollingJob() : JobService() {
                 val response = Util.createRetrofit(splitedUrl)
 
                 // 非同期で記事を取得し、最新記事があれば、通知を行う
-                response.observeOn(AndroidSchedulers.mainThread())
+                val dispose = response.observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.newThread())
                         .subscribe( {
                             val lastFetchTime = preference.getLong("last_published_time" + blog.id.toString(), 0L)
@@ -52,6 +52,7 @@ class PollingJob() : JobService() {
                         }, {
                             Log.e("ERROR", it.cause.toString())
                         })
+                dispose.dispose()
                 }
         }
         realm.close()
