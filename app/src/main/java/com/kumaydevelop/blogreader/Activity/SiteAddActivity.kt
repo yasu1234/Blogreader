@@ -8,9 +8,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
-import android.support.v7.app.AppCompatActivity
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -72,7 +72,7 @@ class SiteAddActivity: AppCompatActivity() {
                     // RSSのURLの取得を行う
                     val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
                     // 誤ったURL入力後に別のURLを確認できるようにrestartLoaderを使う
-                    supportLoaderManager.restartLoader(0, args, getRssUrlCallback)
+                    LoaderManager.getInstance(this).restartLoader(0, args, getRssUrlCallback)
                 } else {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // rssのURLを作成(ブログによって/以下が違うため動的に作成)

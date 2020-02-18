@@ -3,10 +3,10 @@ package com.kumaydevelop.blogreader.Activity
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
-import android.support.customtabs.CustomTabsIntent
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import com.kumaydevelop.blogreader.Adapter.ArticlesAdapter
 import com.kumaydevelop.blogreader.Dialog.AlertDialog
