@@ -1,13 +1,13 @@
 package com.kumaydevelop.blogreader
 
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.contrib.DrawerActions
-import android.support.test.espresso.contrib.NavigationViewActions
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.rule.ActivityTestRule
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.DrawerActions
+import androidx.test.espresso.contrib.NavigationViewActions
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.rule.ActivityTestRule
 import com.kumaydevelop.blogreader.Activity.MainActivity
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule

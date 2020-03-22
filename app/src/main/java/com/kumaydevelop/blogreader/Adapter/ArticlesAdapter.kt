@@ -1,7 +1,7 @@
 package com.kumaydevelop.blogreader.Adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,8 +37,8 @@ class ArticlesAdapter(private val context: Context,
     }
 
     // ビューの表示する値の設定
-    override fun onBindViewHolder(holder: ArticleViewHolder?, position: Int) {
-        holder!!.let {
+    override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
+        holder.let {
             it.title.text = articles[position].title
             val formatter = SimpleDateFormat(Constants.TIMEZONE_ISO, Locale.US)
             val formatDate = formatter.parse(articles[position].date)

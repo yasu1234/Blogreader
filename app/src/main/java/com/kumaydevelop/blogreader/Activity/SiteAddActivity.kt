@@ -8,9 +8,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
-import android.support.v7.app.AppCompatActivity
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -51,7 +51,7 @@ class SiteAddActivity: AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             if (urlText.text.toString().isNullOrBlank()) {
-                var dialog = AlertDialog()
+                val dialog = AlertDialog()
                 dialog.title = "URLを入力してください"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
@@ -60,7 +60,7 @@ class SiteAddActivity: AppCompatActivity() {
             } else if (urlText.text.toString().trim().length < 10
                     || !(urlText.text.toString().trim().substring(0,7) == Constants.HTTP
                     || urlText.text.toString().trim().substring(0,8) == Constants.HTTPS)) {
-                var dialog = AlertDialog()
+                val dialog = AlertDialog()
                 dialog.title = "URL形式に誤りがあります"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 }
@@ -72,7 +72,7 @@ class SiteAddActivity: AppCompatActivity() {
                     // RSSのURLの取得を行う
                     val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
                     // 誤ったURL入力後に別のURLを確認できるようにrestartLoaderを使う
-                    supportLoaderManager.restartLoader(0, args, getRssUrlCallback)
+                    LoaderManager.getInstance(this).restartLoader(0, args, getRssUrlCallback)
                 } else {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
                     // rssのURLを作成(ブログによって/以下が違うため動的に作成)
@@ -86,7 +86,7 @@ class SiteAddActivity: AppCompatActivity() {
                             .subscribe( {
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                                 val blog = it
-                                var dialog = AlertDialog()
+                                val dialog = AlertDialog()
                                 dialog.title = it.title + "を登録しますか?"
                                 dialog.cancelText = "キャンセル"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
@@ -100,7 +100,7 @@ class SiteAddActivity: AppCompatActivity() {
                             }, {
                                 Log.e("ERROR", it.cause.toString())
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                                var dialog = AlertDialog()
+                                val dialog = AlertDialog()
                                 dialog.title = "データを取得できませんでした。"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                 }
@@ -138,15 +138,15 @@ class SiteAddActivity: AppCompatActivity() {
     // LoaderCallbacksの関数をオーバーライドして、処理を変更したコールバックオブジェクトを作成する
     private val getRssUrlCallback : LoaderManager.LoaderCallbacks<Rss> = object : LoaderManager.LoaderCallbacks<Rss> {
 
-        override fun onLoaderReset(loader: Loader<Rss>?) {
+        override fun onLoaderReset(loader: Loader<Rss>) {
         }
 
-        override fun onLoadFinished(loader: Loader<Rss>?, data: Rss?) {
+        override fun onLoadFinished(loader: Loader<Rss>, data: Rss?) {
             if (data?.feedUrl.isNullOrBlank()) {
                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                 val handler = Handler()
                 handler.post {
-                    var dialog = AlertDialog()
+                    val dialog = AlertDialog()
                     dialog.title = "データを取得できませんでした。"
                     dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                     }

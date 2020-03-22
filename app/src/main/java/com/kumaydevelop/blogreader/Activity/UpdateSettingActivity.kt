@@ -6,7 +6,7 @@ import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import com.kumaydevelop.blogreader.Constants
@@ -56,7 +56,7 @@ class UpdateSettingActivity:  AppCompatActivity() {
 
             getSystemService(JobScheduler::class.java).schedule(fetchJob)
 
-            var dialog = AlertDialog()
+            val dialog = AlertDialog()
             dialog.title = "更新しました"
             dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                 finish()

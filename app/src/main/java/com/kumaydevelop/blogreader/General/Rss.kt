@@ -1,7 +1,7 @@
 package com.kumaydevelop.blogreader.General
 
 import android.content.Context
-import android.support.v4.content.AsyncTaskLoader
+import androidx.loader.content.AsyncTaskLoader
 import org.jsoup.Jsoup
 
 data class Rss(val feedUrl: String)
