@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 object Util {
 
-    // URLをドメインまでとそれ以降に分ける
+    // URLをドメインとドメイン以降に分ける
     fun splitUrl(url: String) : List<String> {
         val urlList: MutableList<String> = mutableListOf()
         val fullUrl = url.split(Constants.DOUBLE_SLASH)
