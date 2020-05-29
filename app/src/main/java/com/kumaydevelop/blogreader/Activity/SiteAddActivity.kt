@@ -50,7 +50,7 @@ class SiteAddActivity: AppCompatActivity() {
         val setting = realm.where<SettingModel>().findFirst()!!
 
         confirmButton.setOnClickListener {
-            if (urlText.text.toString().isNullOrBlank()) {
+            if (urlText.text.toString().isBlank()) {
                 val dialog = AlertDialog()
                 dialog.title = "URLを入力してください"
                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
