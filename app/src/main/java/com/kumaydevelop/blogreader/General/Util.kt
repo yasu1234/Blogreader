@@ -4,13 +4,17 @@ import com.kumaydevelop.blogreader.Constants
 import com.kumaydevelop.blogreader.Entity.BlogEntity
 import com.kumaydevelop.blogreader.Interface.RssClient
 import io.reactivex.Observable
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.util.concurrent.TimeUnit
 
 object Util {
+    var response: BlogEntity? = null
 
     // URLをドメインとドメイン以降に分ける
     fun splitUrl(url: String) : List<String> {
@@ -37,6 +41,24 @@ object Util {
 
         // xmlの要素を取得する処理
         val response = retrofit.create(RssClient::class.java).get(url.get(1))
+
+        return response
+    }
+
+    fun getRssData(url: String): BlogEntity? {
+        // Retrofitの設定を行う
+        val splitedUrl = splitUrl(url)
+        val retrofit = Retrofit.Builder()
+                .baseUrl(splitedUrl.get(0))
+                .client(OkHttpClient())
+                .addConverterFactory(SimpleXmlConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+
+        // xmlの要素を取得する処理
+        runBlocking {
+            response = retrofit.create(RssClient::class.java).getRss(splitedUrl.get(1))
+        }
 
         return response
     }
