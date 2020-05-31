@@ -7,11 +7,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.Loader
 import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import com.kumaydevelop.blogreader.Constants
@@ -19,17 +15,18 @@ import com.kumaydevelop.blogreader.Dialog.AlertDialog
 import com.kumaydevelop.blogreader.Entity.BlogEntity
 import com.kumaydevelop.blogreader.General.Rss
 import com.kumaydevelop.blogreader.General.Util
-import com.kumaydevelop.blogreader.General.getRssUrl
 import com.kumaydevelop.blogreader.Model.BlogModel
 import com.kumaydevelop.blogreader.Model.SettingModel
 import com.kumaydevelop.blogreader.R
 import com.kumaydevelop.blogreader.Service.PollingJob
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_add_site.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,43 +66,54 @@ class SiteAddActivity: AppCompatActivity() {
                 // RSSのURLを取得時の処理
                 if (confirmButton.text == Constants.RSS_CONFIRM) {
                     progressBar.visibility = android.widget.ProgressBar.VISIBLE
-                    // RSSのURLの取得を行う
-                    val args: Bundle = Bundle().also { it.putString("url",  urlText.text.toString())}
-                    // 誤ったURL入力後に別のURLを確認できるようにrestartLoaderを使う
-                    LoaderManager.getInstance(this).restartLoader(0, args, getRssUrlCallback)
-                } else {
-                    progressBar.visibility = android.widget.ProgressBar.VISIBLE
-                    // rssのURLを作成(ブログによって/以下が違うため動的に作成)
-                    val splitedUrl = Util.splitUrl(rssText.text.toString().trim())
 
-                    val response = Util.createRetrofit(splitedUrl)
-
-                    // 非同期で記事を取得し、登録確認アラートを表示させる
-                    response.observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(Schedulers.newThread())
-                            .subscribe( {
+                    // URLからRSSのURLを取得
+                    GlobalScope.launch(Dispatchers.Main) {
+                        async(Dispatchers.Default) {Rss.getRssUrl(urlText.text.toString().trim())}.await().let {
+                            if (it != null) {
+                                rssText.setText(it.feedUrl)
+                                confirmButton.setText(Constants.REGISTER)
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                                val blog = it
-                                val dialog = AlertDialog()
-                                dialog.title = it.title + "を登録しますか?"
-                                dialog.cancelText = "キャンセル"
-                                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
-                                    register(blog!!, rssText.text.toString())
-                                    createJob(setting)
-                                    finish()
-                                }
-                                dialog.onCancelClickListener = DialogInterface.OnClickListener { dialog, which ->
-                                }
-                                dialog.show(supportFragmentManager, null)
-                            }, {
-                                Log.e("ERROR", it.cause.toString())
+                            } else {
                                 progressBar.visibility = android.widget.ProgressBar.INVISIBLE
                                 val dialog = AlertDialog()
                                 dialog.title = "データを取得できませんでした。"
                                 dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
                                 }
                                 dialog.show(supportFragmentManager, null)
-                            })
+                            }
+                        }
+                    }
+                } else {
+                    progressBar.visibility = android.widget.ProgressBar.VISIBLE
+
+                    // RSSURLを元にブログ登録できるかの確認を行う
+                    GlobalScope.launch(Dispatchers.Main) {
+                        async(Dispatchers.Default) {Util.getRssData(rssText.text.toString().trim())}.await().let {
+                            progressBar.visibility = android.widget.ProgressBar.INVISIBLE
+                            if (it != null) {
+                                val blog = it
+                                val dialog = AlertDialog()
+                                dialog.title = it.title + "を登録しますか?"
+                                dialog.cancelText = "キャンセル"
+                                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                                    register(blog, rssText.text.toString())
+                                    createJob(setting)
+                                    finish()
+                                }
+                                dialog.onCancelClickListener = DialogInterface.OnClickListener { dialog, which ->
+                                }
+                                dialog.show(supportFragmentManager, null)
+                            } else {
+                                progressBar.visibility = android.widget.ProgressBar.INVISIBLE
+                                val dialog = AlertDialog()
+                                dialog.title = "データを取得できませんでした。"
+                                dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
+                                }
+                                dialog.show(supportFragmentManager, null)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -133,35 +141,6 @@ class SiteAddActivity: AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
-    }
-
-    // LoaderCallbacksの関数をオーバーライドして、処理を変更したコールバックオブジェクトを作成する
-    private val getRssUrlCallback : LoaderManager.LoaderCallbacks<Rss> = object : LoaderManager.LoaderCallbacks<Rss> {
-
-        override fun onLoaderReset(loader: Loader<Rss>) {
-        }
-
-        override fun onLoadFinished(loader: Loader<Rss>, data: Rss?) {
-            if (data?.feedUrl.isNullOrBlank()) {
-                progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-                val handler = Handler()
-                handler.post {
-                    val dialog = AlertDialog()
-                    dialog.title = "データを取得できませんでした。"
-                    dialog.onOkClickListener = DialogInterface.OnClickListener { dialog, which ->
-                    }
-                    dialog.show(supportFragmentManager, null)
-                }
-            } else {
-                // RSSのURLを取得できた場合は登録ボタンに変更する
-                rssText.setText(data!!.feedUrl)
-                confirmButton.setText(Constants.REGISTER)
-                progressBar.visibility = android.widget.ProgressBar.INVISIBLE
-            }
-        }
-
-        override fun onCreateLoader(id: Int, args: Bundle?) = getRssUrl(this@SiteAddActivity, args!!.getString("url"))
-
     }
 
     // ブログの情報を登録する
