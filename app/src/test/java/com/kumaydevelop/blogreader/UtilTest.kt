@@ -1,7 +1,9 @@
 package com.kumaydevelop.blogreader
 
 import com.kumaydevelop.blogreader.General.Util
-import junit.framework.Assert
+import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.util.concurrent.TimeUnit
 
@@ -15,9 +17,9 @@ class UtilTest {
         val util = Util
         val url = "https://hogehoge/fugafuga"
         val calendar = util.splitUrl(url)
-        Assert.assertTrue(calendar.size == 2)
-        Assert.assertEquals(calendar.get(0), "https://hogehoge/")
-        Assert.assertEquals(calendar.get(1), "fugafuga")
+        assertTrue(calendar.size == 2)
+        assertEquals(calendar.get(0), "https://hogehoge/")
+        assertEquals(calendar.get(1), "fugafuga")
     }
 
     /**
@@ -28,9 +30,9 @@ class UtilTest {
         val util = Util
         val url = "http://hogehoge/"
         val calendar = util.splitUrl(url)
-        Assert.assertTrue(calendar.size == 2)
-        Assert.assertEquals(calendar.get(0), "http://hogehoge/")
-        Assert.assertEquals(calendar.get(1), "")
+        assertTrue(calendar.size == 2)
+        assertEquals(calendar.get(0), "http://hogehoge/")
+        assertEquals(calendar.get(1), "")
     }
 
     /**
@@ -53,7 +55,7 @@ class UtilTest {
         urlList.add("http://hogehoge/")
         urlList.add("fugafuga")
         val retrofit = util.createRetrofit(urlList)
-        Assert.assertNotNull(retrofit)
+        assertNotNull(retrofit)
     }
 
     /**
@@ -64,7 +66,7 @@ class UtilTest {
         val util = Util
         val code = "0"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.MINUTES.toMillis(15))
+        assertEquals(calendar, TimeUnit.MINUTES.toMillis(15))
     }
 
     /**
@@ -75,7 +77,7 @@ class UtilTest {
         val util = Util
         val code = "1"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.MINUTES.toMillis(30))
+        assertEquals(calendar, TimeUnit.MINUTES.toMillis(30))
     }
 
     /**
@@ -86,7 +88,7 @@ class UtilTest {
         val util = Util
         val code = "2"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(1))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(1))
     }
 
     /**
@@ -97,7 +99,7 @@ class UtilTest {
         val util = Util
         val code = "3"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(3))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(3))
     }
 
     /**
@@ -108,7 +110,7 @@ class UtilTest {
         val util = Util
         val code = "4"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(6))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(6))
     }
 
     /**
@@ -119,7 +121,7 @@ class UtilTest {
         val util = Util
         val code = "5"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(12))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(12))
     }
 
     /**
@@ -130,7 +132,7 @@ class UtilTest {
         val util = Util
         val code = "6"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(24))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(24))
     }
 
     /**
@@ -141,6 +143,6 @@ class UtilTest {
         val util = Util
         val code = "10"
         val calendar = util.setUpdateTime(code)
-        Assert.assertEquals(calendar, TimeUnit.HOURS.toMillis(1))
+        assertEquals(calendar, TimeUnit.HOURS.toMillis(1))
     }
 }
