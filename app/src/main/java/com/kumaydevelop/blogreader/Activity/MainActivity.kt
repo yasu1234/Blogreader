@@ -10,8 +10,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ListView
-import android.widget.TextView
 import com.kumaydevelop.blogreader.Adapter.BlogAdapter
 import com.kumaydevelop.blogreader.Constants
 import com.kumaydevelop.blogreader.Dialog.AlertDialog
@@ -24,6 +22,8 @@ import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.blog_list_content.*
+import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.startActivity
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,8 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             preference.edit().putBoolean("isUpdate", false).apply()
         }
 
-        val listView = findViewById<ListView>(R.id.blogList)
-        listView.adapter = BlogAdapter(blogs)
+        blogList.adapter = BlogAdapter(blogs)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -87,8 +86,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         // 記事一覧に遷移
-        listView.setOnItemClickListener { parent, view, position, id ->
-            val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
+        blogList.setOnItemClickListener { parent, view, position, id ->
+            val realmId = idView.text.toString()
             val rssData = realm.where<BlogModel>().equalTo("id", Integer.parseInt(realmId)).findFirst()
             val setting = realm.where<SettingModel>().findAll()
             // 表示件数をintentとして一覧に渡す
@@ -97,9 +96,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         // 長押しでブログ削除
-        listView.setOnItemLongClickListener { parent, view, position, id ->
-            val title = view.findViewById<TextView>(R.id.titleView).text
-            val realmId = view.findViewById<TextView>(R.id.idView).text.toString()
+        blogList.setOnItemLongClickListener { parent, view, position, id ->
+            val title = titleView.text
+            val realmId = idView.text.toString()
             val dialog = AlertDialog()
             dialog.title = title.toString() + "を削除しますか？"
             dialog.cancelText = "キャンセル"
@@ -108,7 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 realm.executeTransaction {
                     rssData!!.deleteFromRealm()
                 }
-                val adapter = listView.adapter as BlogAdapter
+                val adapter = blogList.adapter as BlogAdapter
                 adapter.notifyDataSetChanged()
             }
             dialog.show(supportFragmentManager, null)
