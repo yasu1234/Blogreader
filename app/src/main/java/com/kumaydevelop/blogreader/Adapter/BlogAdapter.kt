@@ -10,14 +10,15 @@ import com.kumaydevelop.blogreader.Model.BlogModel
 import com.kumaydevelop.blogreader.R
 import io.realm.OrderedRealmCollection
 import io.realm.RealmBaseAdapter
+import kotlinx.android.synthetic.main.blog_list_content.view.*
 
 class BlogAdapter(data: OrderedRealmCollection<BlogModel>?) : RealmBaseAdapter<BlogModel>(data) {
 
     // 画面の構成
     inner class ViewHolder(cell: View) {
-        val title = cell.findViewById<TextView>(R.id.titleView)
-        val date = cell.findViewById<TextView>(R.id.dateView)
-        val id = cell.findViewById<TextView>(R.id.idView)
+        val title = cell.titleView
+        val date = cell.dateView
+        val id = cell.idView
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

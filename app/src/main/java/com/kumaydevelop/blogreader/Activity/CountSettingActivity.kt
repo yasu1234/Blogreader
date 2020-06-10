@@ -24,7 +24,7 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting_count)
-        val radioGroup: RadioGroup = findViewById(R.id.radioGroup)
+        val radioGroup: RadioGroup = radioGroup
         realm = Realm.getDefaultInstance()
 
         val displayCount = realm.where<SettingModel>().findFirst()!!
