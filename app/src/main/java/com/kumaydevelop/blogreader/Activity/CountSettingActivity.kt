@@ -6,10 +6,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.databinding.DataBindingUtil
 import com.kumaydevelop.blogreader.Constants
+import androidx.lifecycle.ViewModelProviders
 import com.kumaydevelop.blogreader.Dialog.AlertDialog
 import com.kumaydevelop.blogreader.Model.SettingModel
 import com.kumaydevelop.blogreader.R
+import com.kumaydevelop.blogreader.databinding.ActivitySettingCountBinding
+import com.kumaydevelop.blogreader.viewmodel.CountSettingViewModel
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_setting_count.*
@@ -24,13 +28,16 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting_count)
+        val binding: ActivitySettingCountBinding = DataBindingUtil.setContentView(this,R.layout.activity_setting_count)
+        val countSettingViewModel = ViewModelProviders.of(this).get(CountSettingViewModel::class.java)
+        binding.viewModel = countSettingViewModel
         val radioGroup: RadioGroup = radioGroup
         realm = Realm.getDefaultInstance()
 
         val displayCount = realm.where<SettingModel>().findFirst()!!
 
         // 表示時に登録データでチェックする
-        setRadioChecked(displayCount.displayCountCode)
+        countSettingViewModel.setRadioChecked(displayCount.displayCountCode)
 
         saveButton.setOnClickListener {
             val selectedId =radioGroup.checkedRadioButtonId
