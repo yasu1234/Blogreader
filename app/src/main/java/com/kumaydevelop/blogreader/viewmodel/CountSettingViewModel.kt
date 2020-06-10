@@ -14,6 +14,7 @@ class CountSettingViewModel: ViewModel() {
         radioChecked.postValue(R.id.Radio10Count)
     }
 
+    // 初期表示時に登録している件数をチェックしている状態にする
     fun setRadioChecked(displayCount : String) {
         when (displayCount) {
             Constants.DisplayCount.TEN.ordinal.toString() -> {

@@ -70,29 +70,6 @@ class CountSettingActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListe
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
     }
 
-
-
-    // 初期表示時に登録している件数をチェックしている状態にする
-    fun setRadioChecked(displayCount : String) {
-        when (displayCount) {
-            Constants.DisplayCount.TEN.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio10Count)
-            }
-            Constants.DisplayCount.TWENTY.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio20Count)
-            }
-            Constants.DisplayCount.THIRTY.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio30Count)
-            }
-            Constants.DisplayCount.FORTY.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio40Count)
-            }
-            Constants.DisplayCount.FIFTY.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio50Count)
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
