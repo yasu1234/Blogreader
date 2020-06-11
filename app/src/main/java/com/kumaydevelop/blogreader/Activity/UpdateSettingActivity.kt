@@ -9,12 +9,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import com.kumaydevelop.blogreader.Constants
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import com.kumaydevelop.blogreader.Dialog.AlertDialog
 import com.kumaydevelop.blogreader.General.Util
 import com.kumaydevelop.blogreader.Model.SettingModel
 import com.kumaydevelop.blogreader.R
 import com.kumaydevelop.blogreader.Service.PollingJob
+import com.kumaydevelop.blogreader.databinding.ActivitySettingUpdateBinding
+import com.kumaydevelop.blogreader.viewmodel.UpdateSettingViewModel
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_setting_count.*
@@ -27,13 +30,16 @@ class UpdateSettingActivity:  AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_setting_update)
+        val binding: ActivitySettingUpdateBinding = DataBindingUtil.setContentView(this,R.layout.activity_setting_update)
+        val updateSettingViewModel = ViewModelProviders.of(this).get(UpdateSettingViewModel::class.java)
+        binding.viewmodel = updateSettingViewModel
+
         val radioGroup: RadioGroup = findViewById(R.id.radioGroup)
         realm = Realm.getDefaultInstance()
 
         val setting = realm.where<SettingModel>().findFirst()!!
         // 表示時に登録データでチェックする
-        setRadioChecked(setting.updateTimeCode)
+        updateSettingViewModel.setRadioChecked(setting.updateTimeCode)
 
         saveButton.setOnClickListener {
             val selectedId = radioGroup.checkedRadioButtonId
@@ -73,32 +79,5 @@ class UpdateSettingActivity:  AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
-    }
-
-    // 初期表示時に登録している件数をチェックしている状態にする
-    fun setRadioChecked(updateTimeCode : String) {
-        when (updateTimeCode) {
-            Constants.UpdateTime.FIFTEENMINUTES.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio15minutes)
-            }
-            Constants.UpdateTime.THIRTYMINUTES.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio30minutes)
-            }
-            Constants.UpdateTime.HOUR.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio1hour)
-            }
-            Constants.UpdateTime.THREEHOURS.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio3hours)
-            }
-            Constants.UpdateTime.SIXHOURS.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio6hours)
-            }
-            Constants.UpdateTime.TWENTYHOUES.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio12hours)
-            }
-            Constants.UpdateTime.DAY.ordinal.toString() -> {
-                radioGroup.check(R.id.Radio24hours)
-            }
-        }
     }
 }

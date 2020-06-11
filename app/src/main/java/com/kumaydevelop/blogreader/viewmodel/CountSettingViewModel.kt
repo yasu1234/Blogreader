@@ -11,26 +11,26 @@ class CountSettingViewModel: ViewModel() {
     var radioChecked = MutableLiveData<Int>()
 
     init{
-        radioChecked.postValue(R.id.Radio10Count)
+        radioChecked.setValue(R.id.Radio10Count)
     }
 
     // 初期表示時に登録している件数をチェックしている状態にする
     fun setRadioChecked(displayCount : String) {
         when (displayCount) {
             Constants.DisplayCount.TEN.ordinal.toString() -> {
-                radioChecked.postValue(R.id.Radio10Count)
+                radioChecked.setValue(R.id.Radio10Count)
             }
             Constants.DisplayCount.TWENTY.ordinal.toString() -> {
-                radioChecked.postValue(R.id.Radio20Count)
+                radioChecked.setValue(R.id.Radio20Count)
             }
             Constants.DisplayCount.THIRTY.ordinal.toString() -> {
-                radioChecked.postValue(R.id.Radio30Count)
+                radioChecked.setValue(R.id.Radio30Count)
             }
             Constants.DisplayCount.FORTY.ordinal.toString() -> {
-                radioChecked.postValue(R.id.Radio40Count)
+                radioChecked.setValue(R.id.Radio40Count)
             }
             Constants.DisplayCount.FIFTY.ordinal.toString() -> {
-                radioChecked.postValue(R.id.Radio50Count)
+                radioChecked.setValue(R.id.Radio50Count)
             }
         }
     }
